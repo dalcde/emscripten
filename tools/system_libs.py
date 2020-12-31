@@ -942,7 +942,7 @@ class libcxx(NoExceptLibrary, MTLibrary):
   cflags = ['-DLIBCXX_BUILDING_LIBCXXABI=1', '-D_LIBCPP_BUILDING_LIBRARY', '-Oz',
             '-D_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS']
 
-  src_dir = ['system', 'lib', 'libcxx']
+  src_dir = ['system', 'lib', 'libcxx', 'src']
   src_files = [
     'algorithm.cpp',
     'any.cpp',
@@ -1956,13 +1956,12 @@ def mycopytree(src, dest):
 def install_system_headers():
   install_dirs = {
     ('include',): '',
-    ('lib', 'compiler-rt', 'include'): '',
     ('include', 'compat'): 'compat',
+    ('lib', 'compiler-rt', 'include'): '',
     ('lib', 'libunwind', 'include'): '',
     ('lib', 'libc', 'musl', 'arch', 'emscripten'): '',
-    ('lib', 'libcxx'): '',
-    ('include', 'libc'): '',
-    ('include', 'libcxx'): os.path.join('c++', 'v1'),
+    ('lib', 'libc', 'musl', 'include'): '',
+    ('lib', 'libcxx', 'include'): os.path.join('c++', 'v1'),
     ('lib', 'libcxxabi', 'include'): os.path.join('c++', 'v1'),
   }
 
@@ -1971,10 +1970,6 @@ def install_system_headers():
     src = shared.path_from_root('system', *src)
     dest = os.path.join(target_include_dir, dest)
     mycopytree(src, dest)
-
-  # TODO(sbc): Move these headers back into thier respecive source trees
-  for dirname in ['libc', 'libcxx']:
-    shutil.rmtree(os.path.join(target_include_dir, dirname))
 
   stamp = shared.Cache.get_path('sysroot_install.stamp')
   with open(stamp, 'w') as f:
